@@ -1,6 +1,6 @@
 # Command Reference
 
-fnos-cli exposes 111 commands across 21 domains.
+fnos-cli exposes 117 commands across 21 domains.
 
 ## Help and Command Syntax
 
@@ -332,6 +332,56 @@ Query download tasks
 |---|---:|---|---|
 | `--state-filter <integer>` | no | integer | Task state bit mask. Default: `65535`. |
 | `--init-flag <boolean>` | no | boolean | Include initialization data. Default: `true`. |
+
+### `download addUris`
+
+Add download tasks from URIs
+
+| Option | Required | Type | Description |
+|---|---:|---|---|
+| `--uris <uris>` | yes | json-array | JSON array of magnet/http/https/ftp/ftps URIs. |
+| `--select-files <boolean>` | no | boolean | Let the user pick files before starting. Default: `false`. |
+
+### `download pause`
+
+Pause download tasks
+
+| Option | Required | Type | Description |
+|---|---:|---|---|
+| `--ids <ids>` | yes | csv | Comma-separated task IDs. |
+
+### `download resume`
+
+Resume download tasks
+
+| Option | Required | Type | Description |
+|---|---:|---|---|
+| `--ids <ids>` | yes | csv | Comma-separated task IDs. |
+
+### `download remove`
+
+Remove download tasks
+
+| Option | Required | Type | Description |
+|---|---:|---|---|
+| `--ids <ids>` | yes | csv | Comma-separated task IDs. |
+| `--delete-files <boolean>` | no | boolean | Also delete the downloaded files. Default: `false`. |
+
+### `download taskInfo`
+
+Get one download task in detail
+
+| Option | Required | Type | Description |
+|---|---:|---|---|
+| `--id <integer>` | yes | integer | Task ID. |
+
+### `download taskFiles`
+
+Get the file list of one download task
+
+| Option | Required | Type | Description |
+|---|---:|---|---|
+| `--id <integer>` | yes | integer | Task ID. |
 
 ## mount
 

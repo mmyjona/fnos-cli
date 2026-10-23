@@ -11,7 +11,7 @@ describe('CLI program', () => {
     assert.notEqual(mode & 0o111, 0, 'bin/fnos must have an executable bit');
   });
 
-  it('is import-safe and registers 111 business commands plus public utility commands', () => {
+  it('is import-safe and registers 117 business commands plus public utility commands', () => {
     const script = `
       const assert = require('node:assert/strict');
       const entry = require('./src');
@@ -21,7 +21,7 @@ describe('CLI program', () => {
       const groups = program.commands.filter((command) =>
         command.commands.length && command.name() !== 'completion');
       assert.equal(groups.length, 21);
-      assert.equal(groups.reduce((count, group) => count + group.commands.length, 0), 111);
+      assert.equal(groups.reduce((count, group) => count + group.commands.length, 0), 117);
       assert.ok(groups.find((group) => group.name() === 'docker')
         .commands.some((command) => command.name() === 'listContainers'));
       assert.ok(groups.find((group) => group.name() === 'backup')

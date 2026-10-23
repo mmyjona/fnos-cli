@@ -311,4 +311,16 @@ describe('fnos client authentication', () => {
     assert.ok(clientUtils.getSDKInstance({ id: 1 }, 'DockerManager', sdk) instanceof FakeDomain);
     assert.throws(() => clientUtils.getSDKInstance({}, 'Unknown', sdk), /Unknown SDK class/);
   });
+
+  it('attaches the download center write extensions to the SDK instance', () => {
+    const FakeDomain = class { constructor(client) { this.client = client; } };
+    const sdk = Object.fromEntries(clientUtils.SDK_CLASS_NAMES.map((name) => [name, FakeDomain]));
+    const client = { requestPayloadWithResponse: () => Promise.resolve({ result: 'succ' }) };
+    const downloadCenter = clientUtils.getSDKInstance(client, 'DownloadCenter', sdk);
+    for (const method of ['addUris', 'pauseTasks', 'resumeTasks', 'removeTasks', 'getTaskInfo', 'getTaskFiles']) {
+      assert.equal(typeof downloadCenter[method], 'function', method);
+    }
+    const docker = clientUtils.getSDKInstance(client, 'DockerManager', sdk);
+    assert.equal(docker.addUris, undefined, 'other domains must stay untouched');
+  });
 });

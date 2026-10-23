@@ -47,6 +47,20 @@ describe('command option compiler', () => {
     }, 10000), [[{ pid: 1001, process: 'demo' }], 10000]);
   });
 
+  it('parses JSON string arrays without splitting URIs on commas', () => {
+    assert.deepEqual(buildMethodArguments(COMMAND_CATALOG.download.commands.addUris, {
+      uris: '["magnet:?xt=urn:btih:abc,def","http://host/a.iso"]'
+    }, 10000), [["magnet:?xt=urn:btih:abc,def", 'http://host/a.iso'], false, 10000]);
+    const invalid = ['[]', '["a",1]', '["  "]', '{"a":"b"}', 'not-json'];
+    for (const uris of invalid) {
+      assert.throws(
+        () => buildMethodArguments(COMMAND_CATALOG.download.commands.addUris, { uris }, 10000),
+        (error) => error instanceof CommandParameterError && error.exitCode === 4,
+        uris
+      );
+    }
+  });
+
   it('rejects missing, malformed, and out-of-range values with exit code 4', () => {
     const invalidCases = [
       () => buildMethodArguments(COMMAND_CATALOG.backup.commands.listTasks, {}, 10000),

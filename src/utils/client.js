@@ -1,3 +1,5 @@
+const { downloadCenterExtensions } = require('./download-center-ext');
+
 /**
  * FnosClient wrapper with fnos 0.4 authentication.
  */
@@ -147,7 +149,13 @@ function getSDKInstance(client, className, sdkModule = sdk) {
   if (!SDK_CLASS_NAMES.includes(className) || typeof sdkModule[className] !== 'function') {
     throw new Error(`Unknown SDK class: ${className}`);
   }
-  return new sdkModule[className](client);
+  const instance = new sdkModule[className](client);
+  // The download center has write endpoints the SDK does not wrap; attach them
+  // to the SDK instance so the command catalog stays uniform.
+  if (className === 'DownloadCenter') {
+    Object.assign(instance, downloadCenterExtensions(client));
+  }
+  return instance;
 }
 
 module.exports = {

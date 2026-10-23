@@ -24,7 +24,24 @@ describe('monitoring and storage catalogs', () => {
     assert.deepEqual(Object.keys(monitoringCatalog), ['resmon', 'event', 'notify']);
     assert.deepEqual(Object.keys(storageCatalog), ['store', 'file', 'backup', 'download', 'mount']);
     assert.equal(commandCount(monitoringCatalog), 12);
-    assert.equal(commandCount(storageCatalog), 30);
+    assert.equal(commandCount(storageCatalog), 36);
+  });
+
+  it('exposes the download center write commands with their verified payload options', () => {
+    const download = storageCatalog.download.commands;
+    assert.deepEqual(Object.keys(download), [
+      'getDefaultSaveDirectory', 'getStatistics', 'queryTasks',
+      'addUris', 'pause', 'resume', 'remove', 'taskInfo', 'taskFiles'
+    ]);
+    assert.equal(download.addUris.method, 'addUris');
+    assert.deepEqual(download.addUris.options.map((option) => option.type), ['json-array', 'boolean']);
+    assert.equal(download.addUris.options[1].defaultValue, false);
+    assert.equal(download.remove.options[1].defaultValue, false);
+    assert.equal(download.taskInfo.options[0].min, 1);
+    for (const name of ['pause', 'resume', 'remove']) {
+      assert.equal(download[name].options[0].type, 'csv');
+      assert.equal(download[name].options[0].required, true);
+    }
   });
 
   it('preserves legacy command names and fixes positional defaults', () => {

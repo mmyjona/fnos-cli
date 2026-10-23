@@ -69,6 +69,14 @@ function parseValue(definition, value) {
     }
     return parsed;
   }
+  if (definition.type === 'json-array') {
+    const parsed = parseJson(definition.name, value);
+    if (!Array.isArray(parsed) || parsed.length === 0 ||
+        parsed.some((item) => typeof item !== 'string' || !item.trim())) {
+      throw new CommandParameterError(`--${definition.name} must be a non-empty JSON string array.`);
+    }
+    return parsed.map((item) => item.trim());
+  }
   if (definition.type === 'json-record-array') {
     const parsed = parseJson(definition.name, value);
     if (!Array.isArray(parsed) || parsed.length === 0 || parsed.some((item) => !item || Array.isArray(item) || typeof item !== 'object')) {

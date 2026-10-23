@@ -7,7 +7,7 @@
 
 ## 功能
 
-- 提供 21 个业务领域、111 条查询命令
+- 提供 21 个业务领域、117 条命令（其中下载中心含 6 条写命令）
 - 按命令组逐级展示帮助，同时兼容原有点号调用
 - 支持命名多 server、密码登录、token 重用、两步验证和显式 OAuth 登录
 - 支持 `ws://`、`wss://` 以及可选的严格证书验证
@@ -141,7 +141,29 @@ HTTP 不需要额外参数，和 `--verify-ssl` 同用时报参数冲突。登�
 
 `auth.status` 展示本地记录及 token 到期时间，不联系服务器，也不证明服务端授权仍然有效。`logout` 仅清除本地记录，不撤销服务端授权。
 
-现有 111 条业务命令均复用 SDK 请求接口，但具体端点是否可用仍受 scope、账户权限和 fnOS 网关支持限制。SDK 的真机验证范围包括授权换码和 `user.info`，不能据此推断全部端点均可用。
+现有 117 条业务命令均复用 SDK 请求接口，但具体端点是否可用仍受 scope、账户权限和 fnOS 网关支持限制。SDK 的真机验证范围包括授权换码和 `user.info`，不能据此推断全部端点均可用。其中 `download` 域的 6 条写命令（`addUris`、`pause`、`resume`、`remove`、`taskInfo`、`taskFiles`）不在 fnos 0.5.0 的 SDK 封装内，由本 CLI 直接调用下载中心端点实现，端点名与载荷已用真机流量核对。
+
+### 下载中心：命令行增删任务
+
+fnOS 下载中心是 aria2 与 qBittorrent 的统一前端，两个引擎只监听本机 unix socket，远端节点无法直连；走 CLI 的 WebSocket 通道则任何已登录节点都能用。
+
+```bash
+# 添加任务（磁力/直链，JSON 数组避免逗号把磁力链接切断）
+fnos download addUris --uris '["magnet:?xt=urn:btih:..."]'
+fnos download addUris --uris '["http://host/file.iso"]' --select-files true
+
+# 查任务 ID 后暂停 / 继续 / 删除
+fnos download queryTasks --raw
+fnos download pause --ids 318
+fnos download resume --ids 318
+fnos download remove --ids 320 --delete-files true
+
+# 单任务详情与文件列表
+fnos download taskInfo --id 318
+fnos download taskFiles --id 318
+```
+
+`addUris` 不传保存目录时使用下载中心的默认目录（`download getDefaultSaveDirectory` 可查）。`remove` 默认只删任务，加 `--delete-files true` 才同时删本地文件。写入命令没有幂等保护，执行前请先用 `queryTasks` 确认任务 ID。
 
 ### 配置升级兼容
 
@@ -157,7 +179,7 @@ OAuth 记录使用 `authType: "oauth"`，保存 endpoint、可用账户名，以
 
 ## 命令参考
 
-fnos-cli 提供 21 个领域、111 条业务命令。完整参数、类型和默认值见 [命令参考](docs/commands.md)。
+fnos-cli 提供 21 个领域、117 条业务命令。完整参数、类型和默认值见 [命令参考](docs/commands.md)。
 
 帮助按命令层级展开：顶层列出命令组及全局参数，命令组列出直接子命令、
 通用认证参数及全局参数，具体命令再展示自己的业务参数。

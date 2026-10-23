@@ -17,7 +17,8 @@ const home = () => {
 const requiredValues = {
   direction: '0', disk: 'sda', path: '/mock/path', files: 'vol1/mock-file',
   ifName: 'eth0', processes: '[{"pid":1001,"process":"demo"}]',
-  uid: '1000', group: 'users', name: 'theme'
+  uid: '1000', group: 'users', name: 'theme',
+  uris: '["http://127.0.0.1/mock.iso"]', ids: '1', id: '1'
 };
 
 function commandArgs(domainName, commandName, definition, dotted) {
@@ -112,8 +113,8 @@ describe('fnos CLI smoke tests', function () {
   });
 
   for (const dotted of [false, true]) {
-    it(`routes all 111 business commands with ${dotted ? 'dotted' : 'grouped'} syntax`, () => {
-      assert.equal(COMMAND_COUNT, 111);
+    it(`routes all 117 business commands with ${dotted ? 'dotted' : 'grouped'} syntax`, () => {
+      assert.equal(COMMAND_COUNT, 117);
       const testHome = home();
       for (const [domainName, domain] of Object.entries(COMMAND_CATALOG)) {
         for (const [commandName, definition] of Object.entries(domain.commands)) {

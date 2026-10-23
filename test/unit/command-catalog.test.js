@@ -1,6 +1,7 @@
 const assert = require('node:assert/strict');
 const { describe, it } = require('mocha');
 const sdk = require('fnos');
+const { downloadCenterExtensions } = require('../../src/utils/download-center-ext');
 
 function loadCatalog() {
   try {
@@ -23,25 +24,29 @@ const LEGACY_COMMANDS = [
 ];
 
 describe('complete command catalog', () => {
-  it('contains 21 domains and 111 unique commands', () => {
+  it('contains 21 domains and 117 unique commands', () => {
     assert.ok(COMMAND_CATALOG, 'complete command catalog must be implemented');
     const names = Object.entries(COMMAND_CATALOG).flatMap(([domainName, domain]) =>
       Object.keys(domain.commands).map((commandName) => `${domainName}.${commandName}`)
     );
     assert.equal(DOMAIN_COUNT, 21);
-    assert.equal(COMMAND_COUNT, 111);
-    assert.equal(new Set(names).size, 111);
+    assert.equal(COMMAND_COUNT, 117);
+    assert.equal(new Set(names).size, 117);
     for (const legacyName of LEGACY_COMMANDS) assert.ok(names.includes(legacyName), legacyName);
   });
 
   it('references classes and methods exported by fnos 0.5.0', () => {
     assert.ok(COMMAND_CATALOG, 'complete command catalog must be implemented');
     assert.equal(sdk.version, '0.5.0');
+    const extensions = downloadCenterExtensions({ requestPayloadWithResponse() {} });
     for (const [domainName, domain] of Object.entries(COMMAND_CATALOG)) {
       const Constructor = sdk[domain.className];
       assert.equal(typeof Constructor, 'function', `${domainName}: ${domain.className}`);
       for (const [commandName, definition] of Object.entries(domain.commands)) {
-        assert.equal(typeof Constructor.prototype[definition.method], 'function', `${domainName}.${commandName}`);
+        const onSdkPrototype = typeof Constructor.prototype[definition.method] === 'function';
+        const onCliExtension = domainName === 'download' &&
+          typeof extensions[definition.method] === 'function';
+        assert.ok(onSdkPrototype || onCliExtension, `${domainName}.${commandName}`);
         assert.equal(typeof definition.description, 'string');
         assert.ok(definition.description.length > 0);
         assert.ok(['first', 'last'].includes(definition.timeoutPosition));

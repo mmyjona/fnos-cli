@@ -96,6 +96,26 @@ const storageCatalog = {
       queryTasks: command('queryTasks', 'Query download tasks', [
         { name: 'stateFilter', flag: '--state-filter <integer>', type: 'integer', min: 0, defaultValue: 65535, description: 'Task state bit mask' },
         { name: 'initFlag', flag: '--init-flag <boolean>', type: 'boolean', defaultValue: true, description: 'Include initialization data' }
+      ]),
+      addUris: command('addUris', 'Add download tasks from URIs', [
+        { name: 'uris', flag: '--uris <uris>', type: 'json-array', required: true, description: 'JSON array of magnet/http/https/ftp/ftps URIs' },
+        { name: 'selectFiles', flag: '--select-files <boolean>', type: 'boolean', defaultValue: false, description: 'Let the user pick files before starting' }
+      ]),
+      pause: command('pauseTasks', 'Pause download tasks', [
+        { name: 'ids', flag: '--ids <ids>', type: 'csv', required: true, description: 'Comma-separated task IDs' }
+      ]),
+      resume: command('resumeTasks', 'Resume download tasks', [
+        { name: 'ids', flag: '--ids <ids>', type: 'csv', required: true, description: 'Comma-separated task IDs' }
+      ]),
+      remove: command('removeTasks', 'Remove download tasks', [
+        { name: 'ids', flag: '--ids <ids>', type: 'csv', required: true, description: 'Comma-separated task IDs' },
+        { name: 'deleteFiles', flag: '--delete-files <boolean>', type: 'boolean', defaultValue: false, description: 'Also delete the downloaded files' }
+      ]),
+      taskInfo: command('getTaskInfo', 'Get one download task in detail', [
+        { name: 'id', flag: '--id <integer>', type: 'integer', required: true, min: 1, description: 'Task ID' }
+      ]),
+      taskFiles: command('getTaskFiles', 'Get the file list of one download task', [
+        { name: 'id', flag: '--id <integer>', type: 'integer', required: true, min: 1, description: 'Task ID' }
       ])
     }
   },

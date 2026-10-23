@@ -7,6 +7,11 @@
 
 ## [Unreleased]
 
+### 新增
+
+- `download` 域新增 6 条命令：`addUris`（磁力/直链建任务）、`pause`、`resume`、`remove`（可 `--delete-files`）、`taskInfo`、`taskFiles`。这些端点不在 fnos 0.5.0 SDK 中，由 CLI 通过 `requestPayloadWithResponse` 直接调用 `appcgi.downloadcenter.*`，端点名与载荷已用 fnOS Web UI 的真实 WebSocket 流量核对并在真机上验证增删改
+- 新增 `json-array` 业务参数类型，用于需要保留逗号的字符串数组（如磁力链接），`addUris --uris` 使用该类型
+
 ## [0.5.0] - 2026-10-20
 
 ### 新增

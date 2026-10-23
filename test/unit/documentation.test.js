@@ -28,7 +28,7 @@ describe('release documentation', () => {
     const actual = fs.readFileSync(path.resolve(__dirname, '../../docs/commands.md'), 'utf8');
     assert.equal(actual, renderCommandReference());
     assert.doesNotMatch(actual, /\n\n$/, 'command reference must end with exactly one newline');
-    assert.match(actual, /111 commands across 21 domains/);
+    assert.match(actual, /117 commands across 21 domains/);
     assert.match(actual, /-s, --server <name>/);
     assert.match(actual, /Saved server name/);
     assert.match(actual, /`docker listContainers`/);
